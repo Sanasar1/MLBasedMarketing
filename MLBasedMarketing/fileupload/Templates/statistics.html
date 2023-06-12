@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+            .scrollable-table {
+    width: 100%;
+    height: 185px;  /* Adjust to desired height */
+    overflow: auto;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+      .scrollable-table table {
+    width: 100%;
+    margin-bottom: 0;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+      .scrollable-table th,
+      .scrollable-table td {
+    padding: 5px;  /* Adjust to desired padding */
+    border: 1px solid #ccc;
+    box-shadow: inset 0 0 0 1px #ccc;
+    text-align: center;
+}
+</style>
+
+<div class="col-lg-6 col-xxl-4 my-5 mx-auto text-center">
+  <div class="d-grid gap-2">
+      <h2>Statistics</h2>
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="load_df">
+
+        <label for="selected_df">Select DataFrame:</label>
+        <select name="selected_df" id="selected_df">
+            <option value="mean" {% if selected_df == "mean" %}selected{% endif %}>Cluster Means</option>
+            <option value="describe" {% if selected_df == "describe" %}selected{% endif %}>Dataset statistics</option>
+            <option value="merged" {% if selected_df == "merged" %}selected{% endif %}>Client statistics</option>
+        </select>
+
+        <input type="submit" value="Load DataFrame" class="btn btn-success btn-sm">
+    </form>
+    {% if df_html %}
+        <div class="scrollable-table">
+            <div class="table-border">
+                {{ df_html|safe }}
+            </div>
+        </div>
+    {% endif %}
+      <div style="margin-top: 25px;">
+          <h2>Plot</h2>
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="scatter">
+
+            <label for="x_column">X Column:</label>
+            <select name="x_column" id="x_column">
+                {% for column in df_columns %}
+                    <option value="{{ column }}" {% if column == x_column %}selected{% endif %}>{{ column }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="y_column">Y Column:</label>
+            <select name="y_column" id="y_column">
+                {% for column in df_columns %}
+                    <option value="{{ column }}" {% if column == y_column %}selected{% endif %}>{{ column }}</option>
+                {% endfor %}
+            </select>
+
+            <div style="margin-bottom: 0px;">
+                <input type="submit" value="Create Scatter Plot" class="btn btn-success btn-sm">
+            </div>
+            <div style="display: flex; justify-content: center;">
+              {% if plot %}
+                <img src="data:image/png;base64, {{ plot }}" style="margin-top: 0px;">
+              {% endif %}
+            </div>
+          </form>
+      </div>
+  </div>
+</div>
+{% endblock %}

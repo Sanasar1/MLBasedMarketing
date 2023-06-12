@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+        transition: background-color 0.3s ease;
+      }
+      .bd-mode-toggle {
+        z-index: 1500;
+      }
+      .download-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background-color: #007BFF;
+    border-radius: 5px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+      .scrollable-table {
+    width: 100%;
+    height: 480px;  /* Adjust to desired height */
+    overflow: auto;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+      .scrollable-table table {
+    width: 100%;
+    margin-bottom: 0;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+      .scrollable-table th,
+      .scrollable-table td {
+    padding: 5px;  /* Adjust to desired padding */
+    border: 1px solid #ccc;
+    box-shadow: inset 0 0 0 1px #ccc;
+    text-align: center;
+}
+
+      .graph-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+      .graph {
+    flex: 1 0 200px;
+    margin: 15px;
+    box-sizing: border-box;
+}
+</style>
+
+<div class="col-lg-6 col-xxl-4 my-5 mx-auto text-center">
+  <div class="d-grid gap-2">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-primary" type="submit">Upload</button>
+    </form>
+    <a href="{% url 'download_file' %}" class="download-button">Download</a>
+  </div>
+  {% if df_html %}
+  <h2>Predictions</h2>
+  <div class="scrollable-table">
+    <div class="table-border">
+      {{ df_html|safe }}
+    </div>
+  </div>
+  {% endif %}
+  {% if not file_uploaded %}
+    <button onclick="location.href='{% url 'statistics' %}'" type="button", disabled="disabled" class="btn btn-secondary">Statistics</button>
+  {% endif %}
+  {% if file_uploaded %}
+    <button onclick="location.href='{% url 'statistics' %}'" type="button" class="btn btn-secondary">Statistics</button>
+  {% endif %}
+</div>
+<div class="graph-container">
+  <div id="pie" class="graph" align="center">
+    <div class="col-md-6">
+    {{ pie|safe }}
+    </div>
+  </div>
+  <div id="bar" class="graph" align="center">
+    <div class="col-md-6">
+    {{ bar|safe }}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
